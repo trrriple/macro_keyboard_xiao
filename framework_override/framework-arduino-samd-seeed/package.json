@@ -1,0 +1,15 @@
+{
+  "name": "framework-arduino-samd-seeed",
+  "version": "1.8.2",
+  "description": "Arduino Wiring-based Framework for Microchip SAM D microcontrollers (Seeed SAMD Core)",
+  "keywords": [
+    "framework",
+    "arduino",
+    "microchip",
+    "samd"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Seeed-Studio/ArduinoCore-samd"
+  }
+}

@@ -1,0 +1,305 @@
+mingw32-make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --question
+mingw32-make: *** No rule to make target 'all'.  Stop.
+ 
+# GNU Make 4.3
+# Built for x86_64-w64-mingw32
+# Copyright (C) 1988-2020 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+ 
+
+# Make data base, printed on Wed Feb 16 17:58:58 2022
+
+# Variables
+
+# environment
+FPS_BROWSER_APP_PROFILE_STRING = Internet Explorer
+# environment
+SYSTEMDRIVE = C:
+# environment
+JAVA_HOME = C:\Program Files\Java\jre1.8.0_161
+# environment
+LC_ALL = C
+# environment
+USERPROFILE = C:\Users\rober
+# environment
+VBOX_MSI_INSTALL_PATH = X:\Utilities\VirtualBox\
+# environment
+LOCALAPPDATA = C:\Users\rober\AppData\Local
+# environment
+VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-8cdd0177-2b48-43bc-897d-c2bdcb4b9f61- 
+sock
+# environment
+VSCODE_CWD = C:\Users\rober\AppData\Local\Programs\Microsoft VS Code
+# environment
+SYSTEMROOT = C:\WINDOWS
+# environment
+PROCESSOR_LEVEL = 6
+# environment
+PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules
+# default
+MAKE_COMMAND := mingw32-make.exe
+# automatic
+@D = $(patsubst %/,%,$(patsubst %\,%,$(dir $@)))
+# environment
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_14260_BJQNIZTWESSWKYSK
+# environment
+FPS_BROWSER_USER_PROFILE_STR 
+ING = Default
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# default
+.VARIABLES := 
+# automatic
+%D = $(patsubst %/,%,$(patsubst %\,%,$(dir $%)))
+# environment
+IVIROOTDIR64 = C:\Program Files\IVI Foundation\IVI\
+# automatic
+^D = $(patsubst %/,%,$(patsubst %\,%,$(dir $^)))
+# environment
+VSCODE_LOG_STACK = false
+# automatic
+%F = $(notdir $%)
+# environment
+VSCODE_CODE_CACHE_PATH = C:\Users\rober\AppData\Roaming\Code\CachedData\5554b12acf27056905806867f251c859323ff7e9
+# environment
+LANG = C
+# default
+.LOA 
+DED := 
+# environment
+TMP = C:\Users\rober\AppData\Local\Temp
+# makefile
+MAKEFLAGS = pqrR
+# environment
+ONEDRIVE = C:\Users\rober\OneDrive
+# makefile
+CURDIR := g:/Documents/PlatformIO/Projects/macro_keyboard_xiao
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# automatic
+*D = $(patsubst %/,%,$(patsubst %\,%,$(dir $*)))
+# environment
+PROGRAMFILES = C:\Program Files
+# environment
+MFLAGS = -pqrR
+# default
+.SHELLFLAGS := -c
+# environment
+COMMONPROGRAMW6432 = C:\Program Files\Common Files
+# automatic
++D = $(patsubst %/,%,$(patsubst %\,%,$(dir $+)))
+# makefile
+MAKEFILE_LIST := 
+# automatic
+@F = $(notdir $@)
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+VSCODE_PID = 14260
+# automatic
+?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
+# automatic
+*F = $(notdir $*)
+# automatic
+<D = $(patsubst %/,%,$(patsubst %\,%,$(dir $<)))
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
+# default
+MAKE_HOST := x86_64-w64-mingw32
+# environment
+PROGRAMDATA = C:\ProgramData
+# default
+SHELL := sh.exe
+# environment
+HOMEPATH = \Users\rober
+# environment
+PLATFORMIO_CALLER = vscode
+# default
+MAKECMDGOALS := all
+# environment
+DRIVERDATA = C:\Windows\System32\Drivers\DriverData
+# environment
+NIIVIPATH = C:\Program Files (x86)\IVI Foundation\IVI\
+# environment
+COMSPEC = C:\WINDOWS\system32\cmd.exe
+# environment
+WINDIR = C:\WINDOWS
+# environment
+MAKELEVEL := 0
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+PATH = C:\Program Files\Python310\Scripts\;C:\Program Files\Python310\;C:\Program Files\Broadcom\Broadcom 802.11 Network Adapter\Driver;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Program Files\Java\jre1.8.0_161\bin;C:\Program Files (x86)\Razer Chroma SDK\bin;C:\Program Files\Razer Chroma SDK\bin;C:\Python35\Scripts\;C:\Python35\;C:\Program Files\Docker\Docker\Resources\bin;C:\ProgramData\Oracle\Java\javapath;C:\Python27\;C:\Python27\Scripts;C:\Python34\;C:\Python34\Scripts;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;F:\Crucial;C:\Python34;C:\Python34\Lib\site-packages\flake8;C:\Program Files (x86)\PuTTY\;C:\Program Files (x86)\LLVM\bin;C:\Users\rober\.atom\packages\uncrustify;C:\Program Files (x86)\Calibre2\;C:\php;F:\nodejs\;C:\ProgramData\ComposerSetup\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;F:\MATLAB2017a\runtime\win64;F:\MATLAB2017a\bin;F:\Nvidia CUDA\v8.0;F:\Nvidia CUDA\v8.0\bin;C:\Program Files\Git\cmd;C:\WINDOWS\System32\OpenSSH\;C:\Users\rober\AppData\Local\Microsoft\WindowsApps;C:\Users\rober\AppData\Local\atom\bin;F:\Quartus\modelsim_ase\win32aloem;C:\Users\rober\AppData\Roaming\npm;C:\Users\rober\AppData\Roaming\Composer\vendor\bin;C:\Program Files (x86)\Paragon Software\LinuxFS for Windows\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Users\rober\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\Mullvad VPN\resources;C:\Program Files\dotnet\;C:\MinGW\mingw64\bin;X:\Dev\mingw_dev_lib\x86;X:\Dev\mingw_dev_lib\x64;C:\Program Files (x86)\IVI Foundation\IVI\bin;C:\Program Files\IVI Foundation\IVI\bin;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Users\rober\AppData\Local\Programs\Python\Python310\Scripts\;C:\Users\rober\AppData\Local\Programs\Python\Python310\;C:\Users\rober\AppData\Local\Programs\Python\Python39\Scripts\;C:\Users\rober\AppData\Local\Programs\Python\Python39\;C:\Users\rober\AppData\Local\Microsoft\WindowsApps;C:\Python34\;F:\Quartus\modelsim_ase\win32aloem;C:\Users\rober\AppData\Roaming\npm;C:\Users\rober\AppData\Roaming\Composer\vendor\bin;C:\Users\rober\AppData\Local\Microsoft\WindowsApps;C:\Users\rober\AppData\Local\Programs\Microsoft VS Code\bin
+# environment
+COMPUTERNAME = GANDALF
+# default
+MAKEFILES := 
+# automatic
+^F = $(no 
+tdir $^)
+# environment
+NIEXTCCOMPILERSUPP = C:\Program Files (x86)\National Instruments\Shared\ExternalCompilerSupport\C\
+# environment
+PROMPT = $P$G
+# environment
+VXIPNPPATH64 = C:\Program Files\IVI Foundation\VISA\
+# environment
+LOGONSERVER = \\GANDALF
+# environment
+QSYS_ROOTDIR = F:\Quartus\quartus\sopc_builder\bin
+# environment
+VSCODE_LOG_NATIVE = false
+# environment
+USERNAME = rober
+# environment
+COMMONPROGRAMFILES = C:\Program Files\Common Files
+# automatic
+?F = $(notdir $?)
+# environment
+PROGRAMW6432 
+ = C:\Program Files
+# environment
+NO_PROXY = 127.0.0.1
+# environment
+PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PY;.PYW
+# automatic
++F = $(notdir $+)
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+USERDOMAIN = GANDALF
+# 'override' directive
+GNUMAKEFLAGS := 
+# environment
+OS = Windows_NT
+# environment
+PLATFORMIO_PATH = C:\Users\rober\.platformio\python3;C:\Program Files\Python310\Scripts\;C:\Program Files\Python310\;C:\Program Files\Broadcom\Broadcom 802.11 Network Adapter\Driver;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Program Files\Java\jre1.8.0_161\bin;C:\Program Files (x86)\Razer Chroma SDK\bin;C:\Program Files\Razer Chroma SDK\bin;C:\Python35\Scripts\;C:\Python35\;C:\Program Files\Docker\Docker\Resources\bin;C:\ProgramData\Oracle\Java\javapath;C:\Python27\;C:\Python27\Scripts;C:\Python34\;C:\Python34\Scripts;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;F:\Crucial;C:\Python34;C:\Python34\Lib\site-packages\flake8;C:\Program Files (x86)\PuTTY\;C:\Program Files (x86)\LLVM\bin;C:\Users\rober\.atom\packages\uncrustify;C:\Program Files (x86)\Calibre2\;C:\php;F:\nodejs\;C:\ProgramData\ComposerSetup\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;F:\MATLAB2017a\runtime\win64;F:\MATLAB2017a\bin;F:\Nvidia CUDA\v8.0;F:\Nvidia CUDA\v8.0\bin;C:\Program Files\Git\cmd;C:\WINDOWS\System32\OpenSSH\;C:\Users\rober\AppData\Local\Microsoft\WindowsApps;C:\Users\rober\AppData\Local\atom\bin;F:\Quartus\modelsim_ase\win32aloem;C:\Users\rober\AppData\Roaming\npm;C:\Users\rober\AppData\Roaming\Composer\vendor\bin;C:\Program Files (x86)\Paragon Software\LinuxFS for Windows\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Users\rober\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\Mullvad VPN\resources;C:\Program Files\dotnet\;C:\MinGW\mingw64\bin;X:\Dev\mingw_dev_lib\x86;X:\Dev\mingw_dev_lib\x64;C:\Program Files (x86)\IVI Foundation\IVI\bin;C:\Program Files\IVI Foundation\IVI\bin;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Users\rober\AppData\Local\Programs\Python\Python310\Scripts\;C:\Users\rober\AppData\Local\Programs\Python\Python310\;C:\Users\rober\AppData\Local\Programs\Python\Python39\Scripts\;C:\Users\rober\AppData\Local\Programs\Python\Python39\;C:\Users\rober\AppData\Local\Microsoft\WindowsApps;C:\Python34\;F:\Quartus\modelsim_ase\win32aloem;C:\Users\rober\AppData\Roaming\npm;C:\Users\rober\AppData\Roaming\Composer\vendor\bin;C:\Users\rober\AppData\Local\Microsoft\WindowsApps;C:\Users\rober\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\Python310\Scripts\;C:\Program Files\Python310\;C:\Program Files\Broadcom\Broadcom 802.11 Network Adapter\Driver;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Program Files\Java\jre1.8.0_161\bin;C:\Program Files (x86)\Razer Chroma SDK\bin;C:\Program Files\Razer Chroma SDK\bin;C:\Python35\Scripts\;C:\Python35\;C:\Program Files\Docker\Docker\Resources\bin;C:\ProgramData\Oracle\Java\javapath;C:\Python27\;C:\Python27\Scripts;C:\Python34\;C:\Python34\Scripts;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;F:\Crucial;C:\Python34;C:\Python34\Lib\site-packages\flake8;C:\Program Files (x86)\PuTTY\;C:\Program Files (x86)\LLVM\bin;C:\Users\rober\.atom\packages\uncrustify;C:\Program Files (x86)\Calibre2\;C:\php;F:\nodejs\;C:\ProgramData\ComposerSetup\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;F:\MATLAB2017a\runtime\win64;F:\MATLAB2017a\bin;F:\Nvidia CUDA\v8.0;F:\Nvidia CUDA\v8.0\bin;C:\Program Files\Git\cmd;C:\WINDOWS\System32\OpenSSH\;C:\Users\rober\AppData\Local\Microsoft\WindowsApps;C:\Users\rober\AppData\Local\atom\bin;F:\Quartus\modelsim_ase\win32aloem;C:\Users\rober\AppData\Roaming\npm;C:\Users\rober\AppData\Roaming\Composer\vendor\bin;C:\Program Files (x86)\Paragon Software\LinuxFS for Windows\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Users\rober\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\Mullvad VPN\resources;C:\Program Files\dotnet\;C:\MinGW\mingw64\bin;X:\Dev\mingw_dev_lib\x86;X:\Dev\mingw_dev_lib\x64;C:\Program Files (x86)\IVI Foundation\IVI\bin;C:\Program Files\IVI Foundation\IVI\bin;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Users\rober\AppData\Local\Programs\Python\Python310\Scripts\;C:\Users\rober\AppData\Local\Programs\Python\Python310\;C:\Users\rober\AppData\Local\Programs\Python\Python39\Scripts\;C:\Users\rober\AppData\Local\Programs\Python\Python39\;C:\Users\rober\AppData\Local\Microsoft\WindowsApps;C:\Python34\;F:\Quartus\modelsim_ase\win32aloem;C:\Users\rober\AppData\Roaming\npm;C:\Users\rober\AppData\Roaming\Composer\vendor\bin;C:\Users\rober\AppData\Local\Microsoft\WindowsApps;C:\Users\rober\AppData\Local\Programs\Microsoft VS Code\bin
+# makefile
+.DEFAULT_GOAL := 
+# default
+MAKE_VERSION := 4.3
+# environment
+PROGRAMFILES(X86) = C:\Program Files (x86)
+# environment
+USERDOMAIN_ROAMINGPROFILE = GANDALF
+# environment
+NUMBER_OF_PROCESSORS = 12
+# environment
+PUBLIC = C:\Users\Public
+# environment
+QUARTUS_ROOTDIR = F:\Quartus\quartus
+# environment
+SOPC_KIT_NIOS2 = F:\Quartus\nios2eds
+# environment
+APPDATA = C:\Users\rober\AppData\Roaming
+# environment
+HOMEDRIVE = C:
+# environment
+PROCESSOR_ARCHITECTURE = AMD64
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/services/extensions/node/extensionHostProcess
+# environment
+PLATFORMIO_IDE = 2.4.1
+# environment
+VXIPNPPATH = C:\Program Files (x86)\IVI Foundation\VISA\
+# environment
+COMMONPROGRAMFILES(X86) = C:\Program Files (x86)\Common Files
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+TEMP = C:\Users\rober\AppData\Local\Temp
+# environment
+VSCODE_IPC_HOOK = \\.\pipe\ff616921a06b5c6f85e6c0700ca885b3-1.64.0-main-sock
+# default
+.RECIPEPREFIX := 
+# automatic
+<F = $(notdir $<)
+# default
+SUFFIXES := 
+# environment
+ALLUSERSPROFILE = C:\ProgramData
+# environment
+SESSIONNAME = Console
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver ou 
+tput-sync
+# environment
+PROCESSOR_REVISION = 9e0a
+# environment
+IVIROOTDIR32 = C:\Program Files (x86)\IVI Foundation\IVI\
+# environment
+PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
+# variable set hash-table stats:
+# Load=107/1024=10%, Rehash=0, Collisions=12/130=9%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (key g:/Documents/PlatformIO/Projects/macro_keyboard_xiao, mtime 1625197515): 10 files, no impossibilities.
+
+# 10 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+# Not a target:
+all:
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+makefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# Not a target:
+makefile.mak:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# Not a target:
+GNUmakefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# files hash-table stats:
+# Load=6/1024=1%, Rehash=0, Collisions=0/16=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 16 / storage = 122 B / avg = 7 B
+# current buf: size = 8162 B / used = 122 B / count = 16 / avg = 7 B
+
+# strcache performance: lookups = 19 / hit rate = 15%
+# hash-table stats:
+# Load=16/8192=0%, Rehash=0, Collisions=1/19=5%
+# Finished Make data base on Wed Feb 16 17:58:58 2022
+
+ 

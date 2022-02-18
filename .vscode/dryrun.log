@@ -1,0 +1,6 @@
+mingw32-make.exe --dry-run --always-make --keep-going --print-directory
+mingw32-make: Entering directory 'g:/Documents/PlatformIO/Projects/macro_keyboard_xiao'
+mingw32-make: Leaving directory 'g:/Documents/PlatformIO/Projects/macro_keyboard_xiao'
+ 
+mingw32-make: *** No targets specified and no makefile found.  Stop.
+ 
