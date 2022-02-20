@@ -24,16 +24,19 @@
 /************************************************
  * Defines
  * *********************************************/
-#define PROFILE_CHANGE_BUTTON ENCODER_1_BUT_PIN
-#define PROFILE_CHANGE_DWELL 2000 /* how long to hold button */
+#define PROFILE_CHANGE_BUTTON 15  /* last key in map = encoder button */
+#define PROFILE_CHANGE_DWELL 1000 /* how long to hold button */
 
 /************************************************
  * Globals
  * *********************************************/
 static uint8_t const gc_ascii2Keycode[128][2] =  { HID_ASCII_TO_KEYCODE };
+static bool g_changingProfile = false;
+
+/* temp profile swap support vars */
 static uint8_t g_curFuncProfile  = 1;
 static uint8_t g_prevFuncProfile = 1;
-static bool g_changingProfile = false;
+static bool g_tempProfileChange = false;
 
 // static hid_keyboard_report_nkro_t g_currentReport = {0};
 static hid_keyboard_report_nkro_t g_currentReport = {0};
@@ -54,6 +57,9 @@ static button_func_t *gp_encoder_profiles[NUM_PROFILES] = {g_encoderFuncMap1,
 
 RotaryEncoder encoder1(ENCODER_1_CLK_PIN, ENCODER_1_DAT_PIN, 
                        RotaryEncoder::LatchMode::FOUR0);
+
+
+static int g_en1LastPos = 0;
 #endif
 
 Adafruit_SSD1306 display(OLED_SCREEN_WIDTH, OLED_SCREEN_HEIGHT, &Wire, 
@@ -86,14 +92,15 @@ Adafruit_USBD_HID usbHid;
 /************************************************
  * Foward Declarations 
  * *********************************************/
-void oledOnOff(bool onoff);
-void oledFuncMsg(char * word);
+static void _oledOnOff(bool onoff);
+static void _oledFuncMsg(char * word);
 static void _status1LedBlink(int times);
+static void _status2LedBlink(int times);
 
 /************************************************
  * Function Implementations
  ***********************************************/
-void oledProtect(bool justTurnedOn)
+static void _oledProtect(bool justTurnedOn)
 {
     static uint32_t s_lastOnTime;
 
@@ -101,7 +108,7 @@ void oledProtect(bool justTurnedOn)
 
     if(curTime - s_lastOnTime >= OLED_MAX_ON_TIME_MS && justTurnedOn == false)
     {
-        oledOnOff(false);
+        _oledOnOff(false);
     }
     else if(justTurnedOn == true)
     {
@@ -111,14 +118,14 @@ void oledProtect(bool justTurnedOn)
 }
 
 
-void oledOnOff(bool onoff)
+static void _oledOnOff(bool onoff)
 {
     static bool s_curOnoff = false;
 
     if (onoff && !s_curOnoff)
     {
         s_curOnoff = onoff;
-        oledProtect(true);
+        _oledProtect(true);
     }
     else if(!onoff && s_curOnoff)
     {
@@ -128,7 +135,7 @@ void oledOnOff(bool onoff)
     }
 }
 
-void oledBanner(char * text)
+static void _oledBanner(char * text)
 {
     display.setTextSize(1);
     display.setTextColor(BLACK, WHITE);
@@ -139,15 +146,15 @@ void oledBanner(char * text)
     display.println(text);
 }
 
-void oledFuncMsg(char *word)
+static void _oledFuncMsg(char *word)
 {
-    oledOnOff(true);
+    _oledOnOff(true);
     display.clearDisplay();
 
 
     char banner_msg[20];
     snprintf(banner_msg, 20, "Profile: %i", g_curFuncProfile);
-    oledBanner(banner_msg);
+    _oledBanner(banner_msg);
 
     display.setTextSize(1);
     display.setTextColor(WHITE);
@@ -156,7 +163,7 @@ void oledFuncMsg(char *word)
     display.display();
 }
 
-void oledDebug(char *msg)
+static void _oledDebug(char *msg)
 {
     display.drawRect(0, OLED_SCREEN_HEIGHT-8, OLED_SCREEN_WIDTH, 8, BLACK);
     display.fillRect(0, OLED_SCREEN_HEIGHT-8, OLED_SCREEN_WIDTH, 8, BLACK);
@@ -168,13 +175,13 @@ void oledDebug(char *msg)
 }
 
 #if DO_ENCODERS
-void encoder1TickIsr()
+static void _encoder1TickIsr()
 {
   encoder1.tick();
 }
 #endif
 
-void safeSendReportNKRO()
+static void _safeSendReportNKRO()
 {
     if (USBDevice.suspended())
     {
@@ -186,7 +193,19 @@ void safeSendReportNKRO()
                    (uint8_t)sizeof(g_currentReport));
 }
 
-void reportInsert(button_func_t &buttonFunc)
+static void _safeSendReport16(uint16_t key)
+{
+    if (USBDevice.suspended())
+    {
+        USBDevice.remoteWakeup();
+    }
+    while(!usbHid.ready()) delay(1);
+    usbHid.sendReport16(RID_CONSUMER_CONTROL, key);
+
+}
+
+
+static void _reportInsert(button_func_t &buttonFunc)
 {
 
     uint16_t *p_func = &buttonFunc.func[0];
@@ -211,71 +230,79 @@ void reportInsert(button_func_t &buttonFunc)
     }
 
     /* handle non report keys */
-    if (numReportKeys < MAX_BUTTON_FUNCS)
+    for (int i = 0; i < MAX_BUTTON_FUNCS; i++)
     {
-        for (int i = 0; i < MAX_BUTTON_FUNCS; i++)
+        uint16_t key = *(p_func + i);
+        switch (key)
         {
-            uint16_t key = *(p_func + i);
-            switch (key)
+        /* no func */
+        case (0):
+        {
+            break;
+        }
+        case (KEY_PROFILE1_TEMP):
+        {
+            if (g_tempProfileChange == true)
             {
-            /* no func */
-            case (0):
-            {
+                /* if we're already in a temp profile change, don't
+                   allow "nested" changes */
                 break;
             }
-            case (KEY_PROFILE1_TEMP):
+            if (g_curFuncProfile != 1)
             {
-                if (g_curFuncProfile != 1)
-                {
-                    g_prevFuncProfile = g_curFuncProfile;
-                    g_curFuncProfile = 1;
-                }
-                break;
-            }
-            case (KEY_PROFILE2_TEMP):
-            {
-                if (g_curFuncProfile != 2)
-                {
-                    g_prevFuncProfile = g_curFuncProfile;
-                    g_curFuncProfile = 2;
-                }
-                break;
-            }
-            case (KEY_PROFILE3_TEMP):
-            {
-                if (g_curFuncProfile != 3)
-                {
-                    g_prevFuncProfile = g_curFuncProfile;
-                    g_curFuncProfile = 3;
-                }
-                break;
-            }
-            /* media keys require a sendReport16 because they are 16 bits */
-            case (HID_PLAY_PAUSE):
-            case (HID_SCAN_NEXT):
-            case (HID_SCAN_PREVIOUS):
-            case (HID_STOP):
-            case (HID_VOLUME):
-            case (HID_MUTE):
-            case (HID_BASS):
-            case (HID_TREBLE):
-            case (HID_BASS_BOOST):
-            case (HID_VOLUME_INCREMENT):
-            case (HID_VOLUME_DECREMENT):
-            case (HID_BASS_INCREMENT):
-            case (HID_BASS_DECREMENT):
-            case (HID_TREBLE_INCREMENT):
-            case (HID_TREBLE_DECREMENT):
-            {
-                int unmaskedKey = key & ~HID_CONSUMER_CONTROL_FLAG;
-                
-                usbHid.sendReport16(RID_CONSUMER_CONTROL, unmaskedKey);
+                g_prevFuncProfile = g_curFuncProfile;
+                g_curFuncProfile = 1;
+                g_tempProfileChange = true;
                 buttonFunc.funcFired = true;
-                break;
             }
-            default:
-                break;
+            break;
+        }
+        case (KEY_PROFILE2_TEMP):
+        {
+            if (g_curFuncProfile != 2)
+            {
+                g_prevFuncProfile = g_curFuncProfile;
+                g_curFuncProfile = 2;
+                g_tempProfileChange = true;
+                buttonFunc.funcFired = true;
             }
+            break;
+        }
+        case (KEY_PROFILE3_TEMP):
+        {
+            if (g_curFuncProfile != 3)
+            {
+                g_prevFuncProfile = g_curFuncProfile;
+                g_curFuncProfile = 3;
+                g_tempProfileChange = true;
+                buttonFunc.funcFired = true;
+            }
+            break;
+        }
+        /* media keys require a sendReport16 because they are 16 bits */
+        case (HID_PLAY_PAUSE):
+        case (HID_SCAN_NEXT):
+        case (HID_SCAN_PREVIOUS):
+        case (HID_STOP):
+        case (HID_VOLUME):
+        case (HID_MUTE):
+        case (HID_BASS):
+        case (HID_TREBLE):
+        case (HID_BASS_BOOST):
+        case (HID_VOLUME_INCREMENT):
+        case (HID_VOLUME_DECREMENT):
+        case (HID_BASS_INCREMENT):
+        case (HID_BASS_DECREMENT):
+        case (HID_TREBLE_INCREMENT):
+        case (HID_TREBLE_DECREMENT):
+        {
+            int unmaskedKey = key & ~HID_CONSUMER_CONTROL_FLAG;
+            _safeSendReport16(unmaskedKey);
+            buttonFunc.funcFired = true;
+            break;
+        }
+        default:
+            break;
         }
     }
 
@@ -324,7 +351,7 @@ void reportInsert(button_func_t &buttonFunc)
         if(buttonFunc.inReportIdx == FUNC_NOT_IN_REPORT)
         {
             /* oof */
-            oledFuncMsg((char *)"Hid Report Full.");
+            _oledFuncMsg((char *)"Hid Report Full.");
             delay(2000);
             return;
         }
@@ -333,38 +360,100 @@ void reportInsert(button_func_t &buttonFunc)
         {
             uint16_t key = *(p_func + i);
 
-            /* for any standard hid key */
-            if (key != 0 && key < 0xFF)
+            if(key == 0)
             {
-                /* See if this is an ASCII key */
-                if (key < 128)
+                continue;
+            }
+
+            /* See if this is an ASCII key */
+            if (key < 128)
+            {
+                if (gc_ascii2Keycode[key][1])
                 {
-                    if (gc_ascii2Keycode[key][1])
+                    /* it's an ascii key, see if shift modifier is needed */
+                    if (gc_ascii2Keycode[key][0])
                     {
-                        /* convert it to the hid representation */
-                        key = gc_ascii2Keycode[key][1];
-                        /* it's an ascii key, see if shift modifier is needed */
-                        if (gc_ascii2Keycode[key][0])
-                        {
-                            g_currentReport.modifier |=
-                                KEYBOARD_MODIFIER_LEFTSHIFT;
-                        }
+                        g_currentReport.modifier |=
+                            KEYBOARD_MODIFIER_LEFTSHIFT;
                     }
 
-                    int addKeyIdx = buttonFunc.inReportIdx + buttonFunc.keysInReport;
-                    g_currentReport.keycode[addKeyIdx] = key;
-                    g_currentReportItems++;
-                    buttonFunc.keysInReport++;
+                    /* convert it to the hid representation */
+                    key = gc_ascii2Keycode[key][1];
+                    SerialUSB.println(key);
                 }
             }
-            /* else some non reportable key */
+            /* handle modifiers */
+            else if (key >= HID_KEY_CONTROL_LEFT &&
+                     key <= HID_KEY_GUI_RIGHT)
+            {
+                switch (key)
+                {
+                case (HID_KEY_CONTROL_LEFT):
+                {
+                    g_currentReport.modifier |=
+                        KEYBOARD_MODIFIER_LEFTCTRL;
+                    break;
+                }
+                case (HID_KEY_CONTROL_RIGHT):
+                {
+                    g_currentReport.modifier |=
+                        KEYBOARD_MODIFIER_RIGHTCTRL;
+                    break;
+                }
+                case (HID_KEY_SHIFT_LEFT):
+                {
+                    g_currentReport.modifier |=
+                        KEYBOARD_MODIFIER_LEFTSHIFT;
+                    break;
+                }
+                case (HID_KEY_SHIFT_RIGHT):
+                {
+                    g_currentReport.modifier |=
+                        KEYBOARD_MODIFIER_RIGHTSHIFT;
+                    break;
+                }
+                case (HID_KEY_ALT_LEFT):
+                {
+                    g_currentReport.modifier |=
+                        KEYBOARD_MODIFIER_LEFTALT;
+                    break;
+                }
+                case (HID_KEY_ALT_RIGHT):
+                {
+                    g_currentReport.modifier |=
+                        KEYBOARD_MODIFIER_RIGHTALT;
+                    break;
+                }
+                case (HID_KEY_GUI_LEFT):
+                {
+                    g_currentReport.modifier |=
+                        KEYBOARD_MODIFIER_LEFTGUI;
+                    break;
+                }
+                case (HID_KEY_GUI_RIGHT):
+                {
+                    g_currentReport.modifier |=
+                        KEYBOARD_MODIFIER_RIGHTGUI;
+                    break;
+                }
+                }
+            }
+            else /* NON ascii HID keys */
+            {
+                key &= ~HID_NON_ASCII_FLAG;
+            }
+
+            int addKeyIdx = buttonFunc.inReportIdx + buttonFunc.keysInReport;
+            g_currentReport.keycode[addKeyIdx] = key;
+            g_currentReportItems++;
+            buttonFunc.keysInReport++;
         }
-        safeSendReportNKRO();
+        _safeSendReportNKRO();
         buttonFunc.funcFired = true;
     }
 }
 
-void reportRemove(button_func_t &buttonFunc)
+static void _reportRemove(button_func_t &buttonFunc)
 {
     uint16_t *p_func = &buttonFunc.func[0];
     if (g_changingProfile == true)
@@ -395,13 +484,14 @@ void reportRemove(button_func_t &buttonFunc)
         case (HID_TREBLE_DECREMENT):
         {
             /* Sending 0 releases consumer control key */
-            usbHid.sendReport16(RID_CONSUMER_CONTROL, 0);
+            _safeSendReport16(0);
             break;
         }
         case (KEY_PROFILE1_TEMP):
         case (KEY_PROFILE2_TEMP):
         case (KEY_PROFILE3_TEMP):
         {
+            g_tempProfileChange = false; /* we're done with temp swap */
             g_curFuncProfile = g_prevFuncProfile;
             break;
         }
@@ -413,9 +503,84 @@ void reportRemove(button_func_t &buttonFunc)
         {
             if (buttonFunc.keysInReport > 0)
             {
-
                 int removeKeyIdx = buttonFunc.inReportIdx 
                                    + (buttonFunc.keysInReport - 1);
+                
+                uint16_t key = *(p_func + i);
+
+                if (key < 128)
+                {
+                    if (gc_ascii2Keycode[key][1])
+                    {
+                        /* See if shift modifier was needed */
+                        if (gc_ascii2Keycode[key][0])
+                        {
+                            /* remove it */
+                            g_currentReport.modifier &=
+                                ~KEYBOARD_MODIFIER_LEFTSHIFT;
+                        }
+                    }
+                }
+                /* handle modifiers */
+                else if (key >= HID_KEY_CONTROL_LEFT &&
+                         key <= HID_KEY_GUI_RIGHT)
+                {
+                    switch (key)
+                    {
+                    case (HID_KEY_CONTROL_LEFT):
+                    {
+                        g_currentReport.modifier &=
+                            ~KEYBOARD_MODIFIER_LEFTCTRL;
+                        break;
+                    }
+                    case (HID_KEY_CONTROL_RIGHT):
+                    {
+                        g_currentReport.modifier &=
+                            ~KEYBOARD_MODIFIER_RIGHTCTRL;
+                        break;
+                    }
+                    case (HID_KEY_SHIFT_LEFT):
+                    {
+                        g_currentReport.modifier &=
+                            ~KEYBOARD_MODIFIER_LEFTSHIFT;
+                        break;
+                    }
+                    case (HID_KEY_SHIFT_RIGHT):
+                    {
+                        g_currentReport.modifier &=
+                            ~KEYBOARD_MODIFIER_RIGHTSHIFT;
+                        break;
+                    }
+                    case (HID_KEY_ALT_LEFT):
+                    {
+                        g_currentReport.modifier &=
+                            ~KEYBOARD_MODIFIER_LEFTALT;
+                        break;
+                    }
+                    case (HID_KEY_ALT_RIGHT):
+                    {
+                        g_currentReport.modifier &=
+                            ~KEYBOARD_MODIFIER_RIGHTALT;
+                        break;
+                    }
+                    case (HID_KEY_GUI_LEFT):
+                    {
+                        g_currentReport.modifier &=
+                            ~KEYBOARD_MODIFIER_LEFTGUI;
+                        break;
+                    }
+                    case (HID_KEY_GUI_RIGHT):
+                    {
+                        g_currentReport.modifier &=
+                            ~KEYBOARD_MODIFIER_RIGHTGUI;
+                        break;
+                    }
+                    }
+                }
+                else
+                {
+                    key &= ~HID_NON_ASCII_FLAG;
+                }
 
                 g_currentReport.keycode[removeKeyIdx] = 0x00;
                 g_currentReportItems--;
@@ -430,17 +595,17 @@ void reportRemove(button_func_t &buttonFunc)
         }
         }
     }
-    safeSendReportNKRO();
+    _safeSendReportNKRO();
 }
 
-void processProfile(uint32_t tNow_ms)
+static void _processProfile(uint32_t tNow_ms)
 {
     static uint8_t s_newProfile = 0;
     static bool s_buttonBeenReleased = true;
     uint32_t tPressed_ms =
-        G_BUTTON_HW_MAP[PROFILE_CHANGE_BUTTON - 1].tPressed_ms;
+        G_BUTTON_HW_MAP[PROFILE_CHANGE_BUTTON].tPressed_ms;
     uint32_t tReleased_ms =
-        G_BUTTON_HW_MAP[PROFILE_CHANGE_BUTTON - 1].tReleased_ms;
+        G_BUTTON_HW_MAP[PROFILE_CHANGE_BUTTON].tReleased_ms;
 
     /* check if button is still being held down and it's been long enough */
     if (tPressed_ms > tReleased_ms &&
@@ -456,7 +621,7 @@ void processProfile(uint32_t tNow_ms)
             usbHid.keyboardRelease(RID_KEYBOARD);
             usbHid.sendReport16(RID_CONSUMER_CONTROL, 0);
 
-            oledProtect(true);
+            _oledProtect(true);
             display.clearDisplay();
             display.setTextSize(2);
             display.setTextColor(WHITE);
@@ -469,7 +634,7 @@ void processProfile(uint32_t tNow_ms)
         else
         {
             g_curFuncProfile = s_newProfile;
-            oledProtect(true);
+            _oledProtect(true);
             display.clearDisplay();
             display.setTextSize(2);
             display.setTextColor(WHITE);
@@ -481,6 +646,9 @@ void processProfile(uint32_t tNow_ms)
             snprintf(msg, 16, "Changed");
             display.println(msg);
             display.display();
+
+            /* ignore all the encoder value changes during this segue */
+            g_en1LastPos = encoder1.getPosition();
             delay(500); /* force a delay here */
         }
         g_changingProfile = !g_changingProfile;
@@ -500,7 +668,7 @@ void processProfile(uint32_t tNow_ms)
         uint32_t new_pos = encoder1.getPosition();
         if (s_Enos != new_pos)
         {
-            if (tNow_ms - s_lastChangeTime > 100)
+            if (tNow_ms - s_lastChangeTime > 200)
             {
                 s_lastChangeTime = tNow_ms;
                 if (new_pos < s_Enos)
@@ -513,7 +681,7 @@ void processProfile(uint32_t tNow_ms)
                     if (s_newProfile < NUM_PROFILES)
                         s_newProfile++;
                 }
-                oledProtect(true);
+                _oledProtect(true);
                 display.clearDisplay();
                 display.setTextSize(2);
                 display.setTextColor(WHITE);
@@ -528,7 +696,7 @@ void processProfile(uint32_t tNow_ms)
     }
 }
 
-void processButtons(uint32_t tNow_ms)
+static void _processButtons(uint32_t tNow_ms)
 {
     button_func_t *p_buttonFuncMap = gp_button_profiles[g_curFuncProfile - 1];
     for (int i = 0; i < NUM_BUTTONS; i++)
@@ -557,17 +725,36 @@ void processButtons(uint32_t tNow_ms)
         uint32_t tPressedDelta_ms = tNow_ms - G_BUTTON_HW_MAP[i].tPressed_ms;
         uint32_t tReleasedDelta_ms = tNow_ms - G_BUTTON_HW_MAP[i].tReleased_ms;
 
+        /* check if button is released and we've passed debounce threshold */
+        if (buttonState != G_BUTTON_HW_MAP[i].actState 
+                 && tReleasedDelta_ms > G_BUTTON_HW_MAP[i].tDebounce_ms)
+        {
+            if (p_buttonFunc->func != 0)
+            {
+                /* if we're in a temp profile change, check for any release */
+                if (p_buttonFunc->funcFired == true 
+                    || g_tempProfileChange == true)
+                {
+                    _reportRemove(*p_buttonFunc);
+                }
+                p_buttonFunc->funcFired = false;
+            }
+        }
         /* check if button is pressed and we've passed debounce threshold */
-        if (buttonState == G_BUTTON_HW_MAP[i].actState 
+        else if (buttonState == G_BUTTON_HW_MAP[i].actState 
             && tPressedDelta_ms > G_BUTTON_HW_MAP[i].tDebounce_ms)
         {
             if (p_buttonFunc->func != 0 &&
                 p_buttonFunc->funcFired == false)
             {
+                _reportInsert(*p_buttonFunc);
+                
+                if(p_buttonFunc->oneShot == true || p_buttonFunc->turbo == true)
+                {
+                    _reportRemove(*p_buttonFunc);
+                }
 
-                reportInsert(*p_buttonFunc);
-                reportRemove(*p_buttonFunc);
-
+                /* turbo will keep insert/remove cycle until released */
                 if(p_buttonFunc->turbo == true)
                 {
                     p_buttonFunc->funcFired = false;
@@ -575,7 +762,7 @@ void processButtons(uint32_t tNow_ms)
 
                 if (g_changingProfile == false)
                 {
-                    oledFuncMsg(p_buttonFunc->msg);
+                    _oledFuncMsg(p_buttonFunc->msg);
                 }
                 _status1LedBlink(2);
 
@@ -583,24 +770,12 @@ void processButtons(uint32_t tNow_ms)
         }
 
         /* button is not active state */
-        else if (buttonState != G_BUTTON_HW_MAP[i].actState 
-                 && tReleasedDelta_ms > G_BUTTON_HW_MAP[i].tDebounce_ms)
-        {
-            if (p_buttonFunc->func != 0)
-            {
-                p_buttonFunc->funcFired = false;
-
-                if (p_buttonFunc->inReportIdx < (int)sizeof(g_currentReport.keycode))
-                {
-                    reportRemove(*p_buttonFunc);
-                }
-            }
-        }
+       
     }
 }
 
 #if DO_ENCODERS
-void process_encoders()
+static void _processEncoders()
 {
     if (g_changingProfile == true)
     {
@@ -611,23 +786,23 @@ void process_encoders()
     button_func_t enc1CFunc = *(p_encoderFuncMap);
     button_func_t enc1CcFunc = *(p_encoderFuncMap + 1);
 
-    static int s_en1Pos = 0;
-    int new_pos_1 = encoder1.getPosition();
-    if (s_en1Pos != new_pos_1)
+    int newPos1 = encoder1.getPosition();
+    if (g_en1LastPos != newPos1)
     {
-        if (new_pos_1 < s_en1Pos)
+        _status2LedBlink(1);
+        if (newPos1 < g_en1LastPos)
         {
-            reportInsert(enc1CcFunc);
-            reportRemove(enc1CcFunc);
-            oledFuncMsg(enc1CcFunc.msg);
+            _reportInsert(enc1CcFunc);
+            _reportRemove(enc1CcFunc);
+            _oledFuncMsg(enc1CcFunc.msg);
         }
         else
         {
-            reportInsert(enc1CFunc);
-            reportRemove(enc1CFunc);
-            oledFuncMsg(enc1CFunc.msg);
+            _reportInsert(enc1CFunc);
+            _reportRemove(enc1CFunc);
+            _oledFuncMsg(enc1CFunc.msg);
         }
-        s_en1Pos = new_pos_1;
+        g_en1LastPos = newPos1;
     }
 }
 #endif
@@ -651,9 +826,9 @@ void setup()
     /* setup xiao pins */
 #if DO_ENCODERS
     attachInterrupt(digitalPinToInterrupt(ENCODER_1_CLK_PIN), 
-                    encoder1TickIsr, CHANGE);
+                    _encoder1TickIsr, CHANGE);
     attachInterrupt(digitalPinToInterrupt(ENCODER_1_DAT_PIN), 
-                    encoder1TickIsr, CHANGE);
+                    _encoder1TickIsr, CHANGE);
 #endif
 
     if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_SCREEN_ADDRESS))
@@ -670,7 +845,7 @@ void setup()
     display.clearDisplay();
     display.drawBitmap(0, 0, logo, LOGO_WIDTH, LOGO_HEIGHT, WHITE);
     display.display();
-    oledOnOff(true);
+    _oledOnOff(true);
 
     /* take MCP out of reset */
     pinMode(MCP_RESET_CTRL_PIN, OUTPUT);
@@ -747,6 +922,40 @@ static void _status1LedBlink(int times)
     }
 }
 
+static void _status2LedBlink(int times)
+{
+    static uint32_t s_tLast_ms;
+    static int  s_timesLeft = 0; 
+    static int  s_ledState = LOW;
+
+    if(s_timesLeft == 0)
+    {
+        s_timesLeft = times;
+    }
+
+    if(s_timesLeft == 0)
+    {
+        return;
+    }
+
+    uint32_t tNow_ms = millis();
+    
+    if(s_ledState == LOW && (tNow_ms - s_tLast_ms > LED_BLINK_OFF_MS))
+    {
+        digitalWrite(STATUS2_LED_PIN, LOW); /* led is active low */
+        s_ledState = HIGH;
+        s_tLast_ms = tNow_ms;
+    }
+    else if(s_ledState == HIGH && (tNow_ms - s_tLast_ms > LED_BLINK_ON_MS))
+    {
+        digitalWrite(STATUS2_LED_PIN, HIGH);
+        s_ledState = LOW;
+        s_timesLeft--;
+        s_tLast_ms = tNow_ms;
+    }
+}
+
+
 static void _heartbeatLed(uint32_t tNow_ms)
 {
     static uint32_t s_tLast_ms = 0;
@@ -764,13 +973,15 @@ void loop()
 {
     uint32_t tNow_ms = millis();
     _heartbeatLed(tNow_ms);
-    oledProtect(false);
-    processButtons(tNow_ms);
+    _oledProtect(false);
+    _processButtons(tNow_ms);
 
 #if DO_ENCODERS
-    process_encoders();
+    _processEncoders();
 #endif
-    processProfile(tNow_ms);
+    _processProfile(tNow_ms);
 
     _status1LedBlink(0); /* Update any running blink requests */
+    _status2LedBlink(0); /* Update any running blink requests */
+
 }

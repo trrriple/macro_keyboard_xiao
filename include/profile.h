@@ -46,6 +46,17 @@
 #define HID_MEDIA_FASTFOWARD     (0x00B3 | HID_CONSUMER_CONTROL_FLAG)
 #define HID_MEDIA_REWIND         (0x00B4 | HID_CONSUMER_CONTROL_FLAG)
 
+
+#define HID_NON_ASCII_FLAG 0xE000
+
+#define HID_ARROW_RIGHT        (0x4F | HID_NON_ASCII_FLAG)
+#define HID_ARROW_LEFT         (0x50 | HID_NON_ASCII_FLAG)
+#define HID_ARROW_DOWN         (0x51 | HID_NON_ASCII_FLAG)
+#define HID_ARROW_UP           (0x52 | HID_NON_ASCII_FLAG)
+
+
+
+
 /************************************************
  * Typedefs 
  * *********************************************/
@@ -55,11 +66,12 @@ typedef struct
     /* config variables */
     char msg[MAX_MSG_LEN];           /* OLED message when pressed */
     uint16_t func[MAX_BUTTON_FUNCS]; /* what keystrokes to send when pressed */
+    bool oneShot;                    /* func will be removed from report as soon as it is sent */
     bool turbo;                      /* while key is held, key will act like being spammed */
     /* state variable */
-    bool funcFired;                 /* if press action has fired */
-    int  inReportIdx;                 /* > NKRO_N if this function is not in report */
-    int  keysInReport;                 /* How many keys this fella has in the report */
+    bool funcFired;                  /* if press action has fired */
+    int  inReportIdx;                /* > NKRO_N if this function is not in report */
+    int  keysInReport;               /* How many keys this fella has in the report */
 
 } button_func_t;
 

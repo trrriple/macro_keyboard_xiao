@@ -14,7 +14,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_01_PIN,
             LOW,
-            10,
+            5,
             0,
             0,
             HIGH,
@@ -22,7 +22,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_02_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -30,7 +30,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_03_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -38,7 +38,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_04_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -46,7 +46,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_05_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -54,7 +54,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_06_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -62,7 +62,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_07_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -70,7 +70,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_08_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -78,7 +78,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_09_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -86,7 +86,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_10_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -94,7 +94,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_11_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -102,7 +102,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_12_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -110,7 +110,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_13_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -118,7 +118,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_14_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -126,7 +126,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             BUTTON_15_PIN,
             LOW,
-            200,
+            5,
             0,
             0,
             HIGH,
@@ -134,7 +134,7 @@ button_hw_t G_BUTTON_HW_MAP[NUM_BUTTONS] =
         {
             ENCODER_1_BUT_PIN,
             LOW,
-            300,
+            50,
             0,
             0,
             HIGH,

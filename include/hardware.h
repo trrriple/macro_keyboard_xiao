@@ -10,8 +10,8 @@
  * Defines 
  * *********************************************/
 /* These pins are on the xiao */
-#define ENCODER_1_CLK_PIN 8
-#define ENCODER_1_DAT_PIN 9
+#define ENCODER_1_CLK_PIN 9
+#define ENCODER_1_DAT_PIN 8
 #define HEARTBEAT_LED_PIN           13
 #define STATUS1_LED_PIN             12
 #define STATUS2_LED_PIN             11

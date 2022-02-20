@@ -7,9 +7,8 @@ mingw32-make: *** No rule to make target 'all'.  Stop.
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
- 
 
-# Make data base, printed on Wed Feb 16 17:58:58 2022
+# Make data base, printed on Sat Feb 19 18:51:36 2022
 
 # Variables
 
@@ -28,8 +27,7 @@ VBOX_MSI_INSTALL_PATH = X:\Utilities\VirtualBox\
 # environment
 LOCALAPPDATA = C:\Users\rober\AppData\Local
 # environment
-VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-8cdd0177-2b48-43bc-897d-c2bdcb4b9f61- 
-sock
+VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-6a82a59a-aa83-485c-a12d-ccdff190eefa-sock
 # environment
 VSCODE_CWD = C:\Users\rober\AppData\Local\Programs\Microsoft VS Code
 # environment
@@ -43,10 +41,9 @@ MAKE_COMMAND := mingw32-make.exe
 # automatic
 @D = $(patsubst %/,%,$(patsubst %\,%,$(dir $@)))
 # environment
-CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_14260_BJQNIZTWESSWKYSK
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_21536_GVYAPRTVNFYOQTSN
 # environment
-FPS_BROWSER_USER_PROFILE_STR 
-ING = Default
+FPS_BROWSER_USER_PROFILE_STRING = Default
 # environment
 VSCODE_HANDLES_UNCAUGHT_ERRORS = true
 # default
@@ -62,12 +59,11 @@ VSCODE_LOG_STACK = false
 # automatic
 %F = $(notdir $%)
 # environment
-VSCODE_CODE_CACHE_PATH = C:\Users\rober\AppData\Roaming\Code\CachedData\5554b12acf27056905806867f251c859323ff7e9
+VSCODE_CODE_CACHE_PATH = C:\Users\rober\AppData\Roaming\Code\CachedData\f80445acd5a3dadef24aa209168452a3d97cc326
 # environment
 LANG = C
 # default
-.LOA 
-DED := 
+.LOADED := 
 # environment
 TMP = C:\Users\rober\AppData\Local\Temp
 # makefile
@@ -99,7 +95,7 @@ MAKEFILE_LIST :=
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-VSCODE_PID = 14260
+VSCODE_PID = 21536
 # automatic
 ?D = $(patsubst %/,%,$(patsubst %\,%,$(dir $?)))
 # automatic
@@ -139,8 +135,7 @@ COMPUTERNAME = GANDALF
 # default
 MAKEFILES := 
 # automatic
-^F = $(no 
-tdir $^)
+^F = $(notdir $^)
 # environment
 NIEXTCCOMPILERSUPP = C:\Program Files (x86)\National Instruments\Shared\ExternalCompilerSupport\C\
 # environment
@@ -160,8 +155,7 @@ COMMONPROGRAMFILES = C:\Program Files\Common Files
 # automatic
 ?F = $(notdir $?)
 # environment
-PROGRAMW6432 
- = C:\Program Files
+PROGRAMW6432 = C:\Program Files
 # environment
 NO_PROXY = 127.0.0.1
 # environment
@@ -203,7 +197,7 @@ PROCESSOR_ARCHITECTURE = AMD64
 # environment
 VSCODE_AMD_ENTRYPOINT = vs/workbench/services/extensions/node/extensionHostProcess
 # environment
-PLATFORMIO_IDE = 2.4.1
+PLATFORMIO_IDE = 2.4.2
 # environment
 VXIPNPPATH = C:\Program Files (x86)\IVI Foundation\VISA\
 # environment
@@ -213,7 +207,7 @@ ELECTRON_RUN_AS_NODE = 1
 # environment
 TEMP = C:\Users\rober\AppData\Local\Temp
 # environment
-VSCODE_IPC_HOOK = \\.\pipe\ff616921a06b5c6f85e6c0700ca885b3-1.64.0-main-sock
+VSCODE_IPC_HOOK = \\.\pipe\ff616921a06b5c6f85e6c0700ca885b3-1.64.2-main-sock
 # default
 .RECIPEPREFIX := 
 # automatic
@@ -225,8 +219,7 @@ ALLUSERSPROFILE = C:\ProgramData
 # environment
 SESSIONNAME = Console
 # default
-.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver ou 
-tput-sync
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync
 # environment
 PROCESSOR_REVISION = 9e0a
 # environment
@@ -242,9 +235,9 @@ PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 158 Stepping 10, GenuineIntel
 
 # Directories
 
-# . (key g:/Documents/PlatformIO/Projects/macro_keyboard_xiao, mtime 1625197515): 10 files, no impossibilities.
+# . (key g:/Documents/PlatformIO/Projects/macro_keyboard_xiao, mtime 1645316147): 13 files, no impossibilities.
 
-# 10 files, no impossibilities in 1 directories.
+# 13 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -294,12 +287,12 @@ GNUmakefile:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 16 / storage = 122 B / avg = 7 B
-# current buf: size = 8162 B / used = 122 B / count = 16 / avg = 7 B
+# strcache buffers: 1 (0) / strings = 19 / storage = 154 B / avg = 8 B
+# current buf: size = 8162 B / used = 154 B / count = 19 / avg = 8 B
 
-# strcache performance: lookups = 19 / hit rate = 15%
+# strcache performance: lookups = 22 / hit rate = 13%
 # hash-table stats:
-# Load=16/8192=0%, Rehash=0, Collisions=1/19=5%
-# Finished Make data base on Wed Feb 16 17:58:58 2022
+# Load=19/8192=0%, Rehash=0, Collisions=1/22=5%
+# Finished Make data base on Sat Feb 19 18:51:36 2022
 
  
