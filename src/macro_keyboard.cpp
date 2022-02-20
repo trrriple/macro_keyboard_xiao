@@ -24,7 +24,7 @@
 /************************************************
  * Defines
  * *********************************************/
-#define PROFILE_CHANGE_BUTTON 16 /* button 12 is e2 button */
+#define PROFILE_CHANGE_BUTTON ENCODER_1_BUT_PIN
 #define PROFILE_CHANGE_DWELL 2000 /* how long to hold button */
 
 /************************************************
@@ -88,23 +88,24 @@ Adafruit_USBD_HID usbHid;
  * *********************************************/
 void oledOnOff(bool onoff);
 void oledFuncMsg(char * word);
+static void _status1LedBlink(int times);
 
 /************************************************
  * Function Implementations
  ***********************************************/
 void oledProtect(bool justTurnedOn)
 {
-    static uint32_t last_on_time;
+    static uint32_t s_lastOnTime;
 
-    uint32_t cur_time = millis();
+    uint32_t curTime = millis();
 
-    if(cur_time - last_on_time >= 5000 && justTurnedOn == false)
+    if(curTime - s_lastOnTime >= OLED_MAX_ON_TIME_MS && justTurnedOn == false)
     {
         oledOnOff(false);
     }
     else if(justTurnedOn == true)
     {
-        last_on_time = millis();
+        s_lastOnTime = millis();
     }
     /* otherwise, keep waiting */
 }
@@ -112,18 +113,18 @@ void oledProtect(bool justTurnedOn)
 
 void oledOnOff(bool onoff)
 {
-    static bool cur_onoff = false;
+    static bool s_curOnoff = false;
 
-    if (onoff && !cur_onoff)
+    if (onoff && !s_curOnoff)
     {
-        cur_onoff = onoff;
+        s_curOnoff = onoff;
         oledProtect(true);
     }
-    else if(!onoff && cur_onoff)
+    else if(!onoff && s_curOnoff)
     {
         display.clearDisplay();
         display.display();
-        cur_onoff = onoff;
+        s_curOnoff = onoff;
     }
 }
 
@@ -175,8 +176,9 @@ void encoder1TickIsr()
 
 void safeSendReportNKRO()
 {
-    if ( USBDevice.suspended() )  {
-      USBDevice.remoteWakeup();
+    if (USBDevice.suspended())
+    {
+        USBDevice.remoteWakeup();
     }
     while(!usbHid.ready()) delay(1);
     tud_hid_report(RID_KEYBOARD,
@@ -195,14 +197,13 @@ void reportInsert(button_func_t &buttonFunc)
         return;
     }
 
-
     /* figure out how many keys we need to put into report */
     /* only regular keys count, not media keys */
     int numReportKeys = 0;
     for (int i = 0; i < MAX_BUTTON_FUNCS; i++)
     {
         uint16_t key = *(p_func + i);
-        if(key != 0 && key < 0xFF)
+        if (key != 0 && key < 0xFF)
         {
             /* this "should" be a standard ascii HID key */
             numReportKeys++;
@@ -286,7 +287,7 @@ void reportInsert(button_func_t &buttonFunc)
         removed so there should always be enough sequential
         spots */
         int seqEmpties = 0;
-        for (int i = 0; i < sizeof(g_currentReport.keycode); i++)
+        for (size_t i = 0; i < sizeof(g_currentReport.keycode); i++)
         {
             if (g_currentReport.keycode[i] == 0x00) /* found possible spot */
             {
@@ -434,8 +435,8 @@ void reportRemove(button_func_t &buttonFunc)
 
 void processProfile(uint32_t tNow_ms)
 {
-    static uint8_t newProfile = 0;
-    static bool buttonBeenReleased = true;
+    static uint8_t s_newProfile = 0;
+    static bool s_buttonBeenReleased = true;
     uint32_t tPressed_ms =
         G_BUTTON_HW_MAP[PROFILE_CHANGE_BUTTON - 1].tPressed_ms;
     uint32_t tReleased_ms =
@@ -443,12 +444,13 @@ void processProfile(uint32_t tNow_ms)
 
     /* check if button is still being held down and it's been long enough */
     if (tPressed_ms > tReleased_ms &&
-        tNow_ms - tPressed_ms >= PROFILE_CHANGE_DWELL && buttonBeenReleased == true)
+        tNow_ms - tPressed_ms >= PROFILE_CHANGE_DWELL && 
+        s_buttonBeenReleased == true)
     {
-        buttonBeenReleased = false;
+        s_buttonBeenReleased = false;
         if (g_changingProfile == false)
         {
-            newProfile = g_curFuncProfile;
+            s_newProfile = g_curFuncProfile;
             /* release all keys */
 
             usbHid.keyboardRelease(RID_KEYBOARD);
@@ -460,13 +462,13 @@ void processProfile(uint32_t tNow_ms)
             display.setTextColor(WHITE);
             display.setCursor(5, 20);
             char msg[16];
-            snprintf(msg, 16, "Profile: %i", newProfile);
+            snprintf(msg, 16, "Profile: %i", s_newProfile);
             display.println(msg);
             display.display();
         }
         else
         {
-            g_curFuncProfile = newProfile;
+            g_curFuncProfile = s_newProfile;
             oledProtect(true);
             display.clearDisplay();
             display.setTextSize(2);
@@ -488,28 +490,28 @@ void processProfile(uint32_t tNow_ms)
         /* we've released the button after holding it for at least
            PROFILE_CHANGE_DWELL.  
         */
-        buttonBeenReleased = true;
+        s_buttonBeenReleased = true;
     }
 
     if (g_changingProfile == true)
     {
-        static uint32_t en_pos = 0;
-        static uint32_t last_change_time = 0; /* to slow down encoder */
+        static uint32_t s_Enos = 0;
+        static uint32_t s_lastChangeTime = 0; /* to slow down encoder */
         uint32_t new_pos = encoder1.getPosition();
-        if (en_pos != new_pos)
+        if (s_Enos != new_pos)
         {
-            if (tNow_ms - last_change_time > 100)
+            if (tNow_ms - s_lastChangeTime > 100)
             {
-                last_change_time = tNow_ms;
-                if (new_pos < en_pos)
+                s_lastChangeTime = tNow_ms;
+                if (new_pos < s_Enos)
                 {
-                    if (newProfile > 1)
-                        newProfile--;
+                    if (s_newProfile > 1)
+                        s_newProfile--;
                 }
                 else
                 {
-                    if (newProfile < NUM_PROFILES)
-                        newProfile++;
+                    if (s_newProfile < NUM_PROFILES)
+                        s_newProfile++;
                 }
                 oledProtect(true);
                 display.clearDisplay();
@@ -517,11 +519,11 @@ void processProfile(uint32_t tNow_ms)
                 display.setTextColor(WHITE);
                 display.setCursor(5, 20);
                 char msg[16];
-                snprintf(msg, 16, "Profile: %i", newProfile);
+                snprintf(msg, 16, "Profile: %i", s_newProfile);
                 display.println(msg);
                 display.display();
             }
-            en_pos = new_pos;
+            s_Enos = new_pos;
         }
     }
 }
@@ -572,7 +574,11 @@ void processButtons(uint32_t tNow_ms)
                 }
 
                 if (g_changingProfile == false)
+                {
                     oledFuncMsg(p_buttonFunc->msg);
+                }
+                _status1LedBlink(2);
+
             }
         }
 
@@ -584,7 +590,7 @@ void processButtons(uint32_t tNow_ms)
             {
                 p_buttonFunc->funcFired = false;
 
-                if (p_buttonFunc->inReportIdx < sizeof(g_currentReport.keycode))
+                if (p_buttonFunc->inReportIdx < (int)sizeof(g_currentReport.keycode))
                 {
                     reportRemove(*p_buttonFunc);
                 }
@@ -605,11 +611,11 @@ void process_encoders()
     button_func_t enc1CFunc = *(p_encoderFuncMap);
     button_func_t enc1CcFunc = *(p_encoderFuncMap + 1);
 
-    static int en1Pos = 0;
+    static int s_en1Pos = 0;
     int new_pos_1 = encoder1.getPosition();
-    if (en1Pos != new_pos_1)
+    if (s_en1Pos != new_pos_1)
     {
-        if (new_pos_1 < en1Pos)
+        if (new_pos_1 < s_en1Pos)
         {
             reportInsert(enc1CcFunc);
             reportRemove(enc1CcFunc);
@@ -621,7 +627,7 @@ void process_encoders()
             reportRemove(enc1CFunc);
             oledFuncMsg(enc1CFunc.msg);
         }
-        en1Pos = new_pos_1;
+        s_en1Pos = new_pos_1;
     }
 }
 #endif
@@ -629,8 +635,18 @@ void process_encoders()
 void setup()
 {
 
-    SerialUSB.begin(9600);
+    /* setup led pins on xiao (they are active low)*/
+    pinMode(HEARTBEAT_LED_PIN, OUTPUT);
+    digitalWrite(HEARTBEAT_LED_PIN, LOW);
 
+    pinMode(STATUS1_LED_PIN, OUTPUT);
+    digitalWrite(STATUS1_LED_PIN, HIGH);
+
+    pinMode(STATUS2_LED_PIN, OUTPUT);
+    digitalWrite(STATUS2_LED_PIN, HIGH);
+
+
+    SerialUSB.begin(9600);
 
     /* setup xiao pins */
 #if DO_ENCODERS
@@ -664,7 +680,10 @@ void setup()
     if (!mcp.begin_I2C())
     {    
         while (1)
+        {
             SerialUSB.println("MCP Error.");
+            delay(1000);
+        }
     }
 
 
@@ -685,8 +704,6 @@ void setup()
         }
     }
 
-
-
 #if DO_KEYBOARD
     usbHid.setPollInterval(2);
     usbHid.setReportDescriptor(gc_descHidReport, sizeof(gc_descHidReport));
@@ -697,11 +714,56 @@ void setup()
 
 }
 
+static void _status1LedBlink(int times)
+{
+    static uint32_t s_tLast_ms;
+    static int  s_timesLeft = 0; 
+    static int  s_ledState = LOW;
+
+    if(s_timesLeft == 0)
+    {
+        s_timesLeft = times;
+    }
+
+    if(s_timesLeft == 0)
+    {
+        return;
+    }
+
+    uint32_t tNow_ms = millis();
+    
+    if(s_ledState == LOW && (tNow_ms - s_tLast_ms > LED_BLINK_OFF_MS))
+    {
+        digitalWrite(STATUS1_LED_PIN, LOW); /* led is active low */
+        s_ledState = HIGH;
+        s_tLast_ms = tNow_ms;
+    }
+    else if(s_ledState == HIGH && (tNow_ms - s_tLast_ms > LED_BLINK_ON_MS))
+    {
+        digitalWrite(STATUS1_LED_PIN, HIGH);
+        s_ledState = LOW;
+        s_timesLeft--;
+        s_tLast_ms = tNow_ms;
+    }
+}
+
+static void _heartbeatLed(uint32_t tNow_ms)
+{
+    static uint32_t s_tLast_ms = 0;
+    static int      s_ledState = LOW;
+
+    if (tNow_ms - s_tLast_ms > 500)
+    {
+        digitalWrite(HEARTBEAT_LED_PIN, !s_ledState);
+        s_ledState = !s_ledState;
+        s_tLast_ms = tNow_ms;
+    }
+}
 
 void loop()
 {
     uint32_t tNow_ms = millis();
-
+    _heartbeatLed(tNow_ms);
     oledProtect(false);
     processButtons(tNow_ms);
 
@@ -709,4 +771,6 @@ void loop()
     process_encoders();
 #endif
     processProfile(tNow_ms);
+
+    _status1LedBlink(0); /* Update any running blink requests */
 }

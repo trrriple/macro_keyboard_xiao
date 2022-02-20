@@ -58,8 +58,8 @@ typedef struct
     bool turbo;                      /* while key is held, key will act like being spammed */
     /* state variable */
     bool funcFired;                 /* if press action has fired */
-    int inReportIdx;                 /* > NKRO_N if this function is not in report */
-    int keysInReport;                 /* How many keys this fella has in the report */
+    int  inReportIdx;                 /* > NKRO_N if this function is not in report */
+    int  keysInReport;                 /* How many keys this fella has in the report */
 
 } button_func_t;
 
